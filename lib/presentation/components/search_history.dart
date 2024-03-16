@@ -36,11 +36,15 @@ class SearchHistoryWidget extends StatelessWidget {
             );
           }
 
-          return Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Align(
+          final last15SearchQueries = searchQueries.length > 15
+              ? searchQueries.sublist(searchQueries.length - 15)
+              : searchQueries;
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: AppTexts(
                     title: 'Search History',
@@ -49,27 +53,27 @@ class SearchHistoryWidget extends StatelessWidget {
                     color: AppColors.textFieldColor,
                   ),
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: searchQueries.length,
-                  itemBuilder: (context, index) {
-                    final searchQuery = searchQueries[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: CustomContainer(
-                        repoName: searchQuery,
-                        onTap: () {
-                          repositoryProvider.setSearchQuery(searchQuery);
-                          repositoryProvider.searchRepositories(searchQuery);
-                        },
-                        isSaved: true,
-                      ),
-                    );
-                  },
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: last15SearchQueries.length,
+                    itemBuilder: (context, index) {
+                      final searchQuery = last15SearchQueries[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: CustomContainer(
+                          repoName: searchQuery,
+                          onTap: () {
+                            repositoryProvider.setSearchQuery(searchQuery);
+                            repositoryProvider.searchRepositories(searchQuery);
+                          },
+                          isSaved: true,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
       },
