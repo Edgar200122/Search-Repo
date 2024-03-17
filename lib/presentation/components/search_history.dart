@@ -63,8 +63,8 @@ class SearchHistoryWidget extends StatelessWidget {
                         child: CustomContainer(
                           repoName: searchQuery,
                           onTap: () {
-                            repositoryProvider.setSearchQuery(searchQuery);
-                            repositoryProvider.searchRepositories(searchQuery);
+                            // repositoryProvider.setSearchQuery(searchQuery);
+                            // repositoryProvider.searchRepositories(searchQuery);
                           },
                           isSaved: true,
                         ),
