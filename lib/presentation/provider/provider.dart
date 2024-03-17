@@ -87,12 +87,13 @@ class RepositoryProvider extends ChangeNotifier {
   }
 
   Future<void> saveSearchQuery(String query) async {
+  if (query.trim().isNotEmpty) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> searchQueries = prefs.getStringList('searchQueries') ?? [];
     searchQueries.add(query);
     await prefs.setStringList('searchQueries', searchQueries);
   }
-
+}
   Future<List<String>> getSavedSearchQueries() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? searchQueries = prefs.getStringList('searchQueries');

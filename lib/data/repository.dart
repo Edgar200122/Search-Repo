@@ -14,10 +14,7 @@ class RepositoryData {
         final List<dynamic> items = response.data['items'];
         return items
             .take(15)
-            .map((item) => Repository(
-                  fullName: item['full_name'],
-                  description: item['description'],
-                ))
+            .map((item) => Repository.fromJson(item))
             .toList();
       } else {
         throw Exception('Failed to load repositories');
@@ -27,5 +24,4 @@ class RepositoryData {
       throw Exception('Failed to load repositories');
     }
   }
-  
 }
