@@ -11,6 +11,16 @@ class RepositoryProvider extends ChangeNotifier {
   bool _hasSearched = false;
   bool _isSaved = false;
 
+  late SharedPreferences _prefs; 
+
+  RepositoryProvider() {
+    _initSharedPreferences();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
   bool get isLoading => _isLoading;
   List<Repository> get repositories => _repositories;
   String get searchQuery => _searchQuery;
@@ -37,66 +47,65 @@ class RepositoryProvider extends ChangeNotifier {
     }
   }
 
-
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
 
   Future<List<String>> getSavedRepositories() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String>? savedRepoList = prefs.getStringList('savedRepositories');
+    await _initSharedPreferences();
+    List<String>? savedRepoList = _prefs.getStringList('savedRepositories');
 
     return savedRepoList ?? [];
   }
 
   Future<void> saveSelectedRepository(String fullName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await _initSharedPreferences();
     List<String>? savedRepoList =
-        prefs.getStringList('savedRepositories') ?? [];
+        _prefs.getStringList('savedRepositories') ?? [];
 
     if (!savedRepoList.contains(fullName)) {
       savedRepoList.add(fullName);
-      await prefs.setStringList('savedRepositories', savedRepoList);
+      await _prefs.setStringList('savedRepositories', savedRepoList);
       _isSaved = true;
     } else {
       savedRepoList.remove(fullName);
-      await prefs.setStringList('savedRepositories', savedRepoList);
+      await _prefs.setStringList('savedRepositories', savedRepoList);
       _isSaved = false;
     }
     notifyListeners();
   }
 
   Future<bool> savedOrNot(String textForSearch) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await _initSharedPreferences();
     List<String>? savedRepoList =
-        prefs.getStringList('savedRepositories') ?? [];
+        _prefs.getStringList('savedRepositories') ?? [];
     return !savedRepoList.contains(textForSearch);
   }
 
   void removeSavedRepository(String fullName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await _initSharedPreferences();
     List<String>? savedRepoList =
-        prefs.getStringList('savedRepositories') ?? [];
+        _prefs.getStringList('savedRepositories') ?? [];
     if (savedRepoList.contains(fullName)) {
       savedRepoList.remove(fullName);
-      await prefs.setStringList('savedRepositories', savedRepoList);
+      await _prefs.setStringList('savedRepositories', savedRepoList);
       notifyListeners();
     }
   }
 
   Future<void> saveSearchQuery(String query) async {
-  if (query.trim().isNotEmpty) {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> searchQueries = prefs.getStringList('searchQueries') ?? [];
-    searchQueries.add(query);
-    await prefs.setStringList('searchQueries', searchQueries);
+    await _initSharedPreferences();
+    if (query.trim().isNotEmpty) {
+      List<String> searchQueries = _prefs.getStringList('searchQueries') ?? [];
+      searchQueries.add(query);
+      await _prefs.setStringList('searchQueries', searchQueries);
+    }
   }
-}
+
   Future<List<String>> getSavedSearchQueries() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? searchQueries = prefs.getStringList('searchQueries');
+    await _initSharedPreferences();
+    List<String>? searchQueries = _prefs.getStringList('searchQueries');
     return searchQueries ?? [];
   }
 }
